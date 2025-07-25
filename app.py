@@ -2,26 +2,27 @@ from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# Configuração da app e da base de dados
+# App and database configuration
 app = Flask(__name__)
-app.secret_key = 'chave-super-secreta'  # muda isto em produção
+app.secret_key = 'super-secret-key'  # change this in production
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
 db = SQLAlchemy(app)
 
-# Modelo da Tarefa
+# Task model
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-# Modelo do Usuário
+
+# User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     tasks = db.relationship('Task', backref='user', lazy=True)
 
-# Página principal
+# Home page
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if 'user_id' not in session:
@@ -39,9 +40,7 @@ def index():
     tasks = Task.query.filter_by(user_id=user_id).order_by(Task.id).all()
     return render_template('index.html', tasks=tasks)
 
-
-# Página de login
-
+# Login page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -55,11 +54,11 @@ def login():
             session['username'] = user.username
             return redirect('/')
         else:
-            return 'Credenciais inválidas'
+            return 'Invalid credentials'
 
     return render_template('login.html')
 
-# Registro de usuário
+# User registration
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -67,7 +66,7 @@ def register():
         password = generate_password_hash(request.form['password'])
 
         if User.query.filter_by(username=username).first():
-            return 'Usuário já existe!'
+            return 'User already exists!'
 
         new_user = User(username=username, password=password)
         db.session.add(new_user)
@@ -75,38 +74,46 @@ def register():
         return redirect('/login')
 
     return render_template('register.html')
-# Logout do usuário
+
+# Logout
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     return redirect('/login')
 
-
-# Apagar tarefa
+# Delete task
 @app.route('/delete/<int:id>')
 def delete(id):
     task = Task.query.get_or_404(id)
+
+    if task.user_id != session.get('user_id'):
+        return 'Not authorized', 403
 
     try:
         db.session.delete(task)
         db.session.commit()
         return redirect('/')
     except:
-        return 'Erro ao apagar tarefa'
+        return 'Error deleting task'
 
-# Marcar como concluída
+# Toggle task completion
 @app.route('/complete/<int:id>')
 def complete(id):
     task = Task.query.get_or_404(id)
+
+    if task.user_id != session.get('user_id'):
+        return 'Not authorized', 403
+
     task.completed = not task.completed
 
     try:
         db.session.commit()
         return redirect('/')
     except:
-        return 'Erro ao atualizar tarefa'
+        return 'Error updating task'
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+
