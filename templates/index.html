@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body id="main-body" >
+
+<nav class="navbar navbar-light bg-white shadow-sm px-3 d-flex justify-content-between">
+    <span class="navbar-brand mb-0 h1">📝 Minha To-Do List</span>
+    <div class="d-flex align-items-center">
+        <span class="me-3 text-muted">Bem-vindo, <strong>{{ session['username'] }}</strong></span>
+        <button id="toggle-dark" class="btn btn-sm btn-outline-dark me-2">🌙</button>
+        <a href="/logout" class="btn btn-outline-secondary btn-sm">Logout</a>
+    </div>
+</nav>
+
+
+<div class="container mt-5">
+    <form action="/" method="POST" class="input-group mb-4">
+        <input type="text" name="content" class="form-control" placeholder="Nova tarefa..." required>
+        <button class="btn btn-success">Adicionar</button>
+    </form>
+
+    {% if tasks %}
+    <ul class="list-group shadow-sm">
+        {% for task in tasks %}
+        <li class="list-group-item d-flex justify-content-between align-items-center {% if task.completed %}list-group-item-secondary text-decoration-line-through{% endif %}">
+            {{ task.content }}
+            <div>
+                <a href="/complete/{{ task.id }}" class="btn btn-sm btn-outline-success me-2">
+                    {% if task.completed %}↩{% else %}✔{% endif %}
+                </a>
+                <a href="/delete/{{ task.id }}" class="btn btn-sm btn-outline-danger">🗑</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-muted text-center">Nenhuma tarefa ainda. Começa já a adicionar 👇</p>
+    {% endif %}
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('toggle-dark');
+    const body = document.getElementById('main-body');
+
+    // Aplica dark-mode se estava ativado antes
+    const darkModeEnabled = localStorage.getItem('darkMode') === 'true';
+    if (darkModeEnabled) {
+        body.classList.add('dark-mode');
+        toggleBtn.textContent = '☀️';
+    }
+
+    // Botão para alternar o modo
+    toggleBtn.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        const isDark = body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        toggleBtn.textContent = isDark ? '☀️' : '🌙';
+    });
+});
+</script>
+
+
+
+
+</body>
+</html>
+

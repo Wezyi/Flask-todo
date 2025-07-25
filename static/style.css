@@ -1,0 +1,100 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+input.form-control {
+    transition: 0.3s;
+}
+
+input.form-control:focus {
+    box-shadow: 0 0 5px #28a745;
+    border-color: #28a745;
+}
+
+.list-group-item {
+    transition: background 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f1f1f1;
+}
+
+.text-decoration-line-through {
+    color: #6c757d !important;
+}
+.card {
+    border-radius: 1rem;
+}
+
+input:focus {
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+    border-color: #28a745;
+}
+
+a {
+    color: #28a745;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+.dark-mode {
+    background-color: #121212;
+    color: #f1f1f1;
+}
+
+.dark-mode .navbar,
+.dark-mode .list-group-item,
+.dark-mode .card {
+    background-color: #1f1f1f !important;
+    color: #fff !important;
+}
+
+.dark-mode .form-control,
+.dark-mode input,
+.dark-mode .btn {
+    background-color: #2a2a2a;
+    color: #fff;
+    border-color: #555;
+}
+
+.dark-mode a {
+    color: #90ee90;
+}
+/* Força a cor dos textos no dark mode */
+.dark-mode,
+.dark-mode body,
+.dark-mode .navbar,
+.dark-mode .container,
+.dark-mode .form-control,
+.dark-mode input,
+.dark-mode .list-group-item,
+.dark-mode .text-muted {
+    color: #ffffff !important;
+}
+
+/* Corrige o placeholder do input */
+.dark-mode ::placeholder {
+    color: #bbbbbb;
+}
+
+/* Corrige botão "Adicionar" */
+.dark-mode .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+}
+
+/* Corrige botão de logout e ícone */
+.dark-mode .btn-outline-secondary,
+.dark-mode .btn-outline-dark {
+    color: #fff;
+    border-color: #999;
+}
+
+.dark-mode .btn-outline-secondary:hover,
+.dark-mode .btn-outline-dark:hover {
+    background-color: #333;
+    border-color: #ccc;
+}
